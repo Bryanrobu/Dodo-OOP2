@@ -106,8 +106,8 @@ public class MyDodo extends Dodo
      */
 
     public void walkToWorldEdgePrintingCoordinates( ){
-        while( ! borderAhead()){
-            System.out.println ("x: " + getX() + ", " + "y: " + getY());
+        while( !borderAhead()){
+            //System.out.println ("x: " + getX() + ", " + "y: " + getY());
             move();
             if (!canMove()) {
                 break;
@@ -156,15 +156,207 @@ public class MyDodo extends Dodo
         }
     }
     
+    public void climbOverMultipleFences() {
+        if (fenceAhead()) {
+                turnLeft();
+                move();
+                turnRight();
+                move();
+                move();
+                turnRight();
+                while (fenceAhead()) {
+                    if (fenceAhead()) {
+                        turnLeft();
+                        move();
+                        turnRight();
+                    }
+                }
+            move();
+            turnLeft();
+            }
+            else {
+            showError("Your not infront of a fence");
+        }
+    }
+    
     public boolean grainAhead() {
         boolean grain = false;
         move();
         if (onGrain()) {
             grain = true;
         } 
+        stepOneCellBackwards();
+        return grain;
+    }
+    
+    public void gotoEgg() {
+        while (!onEgg()) {
+            move();
+            if (!canMove()) {
+                break;
+            }
+        }
+        if (onEgg()) {
+            System.out.println("Egg found!");
+        }
+    }
+    
+    public void goBackToStartOfRowAndFaceBack() {
+        turn180();
+        walkToWorldEdgePrintingCoordinates();
+        turn180();
+    }
+    
+    public void walktoWorldEdgeClimbingOverFences() {
+        while (!borderAhead()) {
+            move();
+            if (fenceAhead()) {
+                climbOverMultipleFences();
+            }
+            }
+        }
+    
+    
+    public void pickUpGrainsAndPrintCoordinates() {
+        while( !borderAhead()){
+            if (onGrain()) {
+                System.out.println ("x: " + getX() + ", " + "y: " + getY());
+                pickUpGrain();
+            }
+            move();
+            if (onGrain()) {
+                System.out.println ("x: " + getX() + ", " + "y: " + getY());
+                pickUpGrain();
+            }
+        }
+    }
+    
+    public void stepOneCellBackwards() {
         turn180();
         move();
         turn180();
-        return grain;
+    }
+    
+    public void walkToWorldEdgeFillEmptyNests() {
+        while( !borderAhead()){
+            if (onNest()) {
+                if (!onEgg()) {
+                    layEgg();
+                }
+            }
+            move();
+            if (onNest()) {
+                if (!onEgg()) {
+                    layEgg();
+                }
+            }
+        }
+    }
+    
+    public void walkToNestClimbingOverFences() {
+        while ( !borderAhead()) {
+            if (fenceAhead()) {
+                climbOverMultipleFences();
+            }
+            if (onNest()) {
+                if (!onEgg()) {
+                    layEgg();
+                    break;
+                }
+            }
+            move();
+            if (fenceAhead()) {
+                climbOverMultipleFences();
+            }
+            if (onNest()) {
+                if (!onEgg()) {
+                    layEgg();
+                    break;
+                }
+            }
+        }
+    }
+    
+    public String detectFence() {
+        boolean forward = fenceAhead();
+        turnRight();
+        boolean right = fenceAhead();
+        turnRight();
+        boolean behind = fenceAhead();
+        turnRight();
+        boolean left = fenceAhead();
+        turnRight();
+        
+        if (forward == true) {
+            return "forward";
+        } else if (right == true) {
+            return "right";
+        } else if (behind == true) {
+            return "behind";
+        } else if (left == true) {
+            return "left";
+        } else {
+            return "none";
+        }
+    }
+    
+    public String positionToRightOfFence() {
+        String direction = detectFence();
+        if (direction == "left") {
+            turn180();
+            return "done";
+        } else if (direction == "forward") {
+            turnLeft();
+            return "wasForward";
+        } else if (direction == "behind") {
+            turnRight();
+            return "done";
+        } else if (direction == "right") {
+            return "done";
+        }
+        return "none";
+    }
+    
+    public String positionToLeftOfFence() {
+        String direction = detectFence();
+        if (direction == "left") {
+            return "done";
+        } else if (direction == "forward") {
+            turnRight();
+            return "done";
+        } else if (direction == "behind") {
+            turnLeft();
+            return "done";
+        } else if (direction == "right") {
+            turn180();
+            return "done";
+        }
+        return "none";
+    }
+    
+    public void walkAroundFencedAreaToTheRight() {
+        while (!onEgg()) {
+            String position = positionToRightOfFence();
+            if (position == "none") {
+                turnRight();
+                move();
+            } else if (position == "done") {
+                move();
+            }
+        }
+        positionToRightOfFence();
+    }
+    
+    public void walkAroundFencedAreaToTheLeft() {
+        while (!onEgg()) {
+            String position = positionToLeftOfFence();
+            if (position == "none") {
+                turnLeft();
+                move();
+            } else if (position == "done") {
+                move();
+            }
+        }
+        positionToLeftOfFence();
     }
 }
