@@ -377,7 +377,7 @@ public class MyDodo extends Dodo
                     move();
                 }
             }
-            positionToRightOfFence();
+            faceEast();
         }
     }
     
@@ -391,7 +391,7 @@ public class MyDodo extends Dodo
                     move();
                 }
             }
-            positionToLeftOfFence();
+            faceEast();
         }
     }
     
@@ -466,8 +466,78 @@ public class MyDodo extends Dodo
                 turn180();
             }
         }
+        faceEast();
         layEgg();
         geefCompliment("Goed gedaan mini!");
+    }
+    
+    public void faceEast() {
+        while (getDirection() != EAST) {
+            turnRight();
+        }
+    }
+    
+    public void faceNorth() {
+        while (getDirection() != NORTH) {
+            turnRight();
+        }
+    }
+    
+    public void faceSouth() {
+        while (getDirection() != SOUTH) {
+            turnRight();
+        }
+    }
+    
+    public void faceWest() {
+        while (getDirection() != WEST) {
+            turnRight();
+        }
+    }
+    
+    public boolean locationReached(int x, int y) {
+        if (getX() == x && getY() == y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void goToLocation(int x, int y) {
+        while (!locationReached(x, y)) {
+            if (getX() < x) {
+                faceEast();
+                if (!borderAhead() || fenceAhead()) {
+                    move();
+                } else {
+                    break;
+                }               
+            } else if (getX() > x) {
+                faceWest();
+                if (!borderAhead() || fenceAhead()) {
+                    move();
+                } else {
+                    break;
+                }               
+            }
+            
+            if (getY() < y) {
+                faceSouth();
+                if (!borderAhead() || fenceAhead()) {
+                    move();
+                } else {
+                    break;
+                }               
+            } else if (getY() > y) {
+                faceNorth();
+                if (!borderAhead() || fenceAhead()) {
+                    move();
+                } else {
+                    break;
+                }               
+            }
+        }
+        faceEast();
     }
 }
 
