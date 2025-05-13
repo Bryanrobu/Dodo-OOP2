@@ -309,6 +309,30 @@ public class MyDodo extends Dodo
         }
     }
     
+    public boolean detectFenceOnRight() {
+        turnRight();
+        boolean right = fenceAhead();
+        turnLeft();
+        
+        if (right == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean detectFenceOnLeft() {
+        turnLeft();
+        boolean left = fenceAhead();
+        turnRight();
+        
+        if (left == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public String positionToRightOfFence() {
         String direction = detectFence();
         if (direction == "left") {
@@ -423,4 +447,27 @@ public class MyDodo extends Dodo
             }
         }
     }
+    
+    public void geefCompliment(String tekst) {
+        getWorld().addObject(new Compliment(tekst), getX(), getY());
+    }
+    
+    public void solveBasicMazeToNest() {
+        while (!onNest()) {
+            if (detectFenceOnRight() == false) {
+                turnRight();
+                move();
+            } else if (fenceAhead() == false) {
+                move();
+            } else if (detectFenceOnLeft() == false) {
+                turnLeft();
+                move();
+            } else {
+                turn180();
+            }
+        }
+        layEgg();
+        geefCompliment("Goed gedaan mini!");
+    }
 }
+
