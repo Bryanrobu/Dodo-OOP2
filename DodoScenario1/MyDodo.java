@@ -469,6 +469,8 @@ public class MyDodo extends Dodo
             } else if (eggToYourLeft()) {
                 turnLeft();
                 walkAndPickup();
+            } else if (nestAhead()) {
+                move();
             } else if (!nestAhead()) {
                 findNest();
                 move();
