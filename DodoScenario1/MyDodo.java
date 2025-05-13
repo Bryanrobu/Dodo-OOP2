@@ -209,11 +209,12 @@ public class MyDodo extends Dodo
     
     public void walktoWorldEdgeClimbingOverFences() {
         while (!borderAhead()) {
-            move();
             if (fenceAhead()) {
                 climbOverMultipleFences();
+            } else {
+                move();
             }
-            }
+        }
         }
     
     
@@ -239,22 +240,24 @@ public class MyDodo extends Dodo
     
     public void walkToWorldEdgeFillEmptyNests() {
         while( !borderAhead()){
-            if (onNest()) {
-                if (!onEgg()) {
-                    layEgg();
-                }
+            if (onNest() && !onEgg()) {
+                layEgg();
             }
             move();
-            if (onNest()) {
-                if (!onEgg()) {
-                    layEgg();
-                }
+            if (onNest() && !onEgg()) {
+                layEgg();
             }
         }
     }
     
     public void walkToNestClimbingOverFences() {
         while ( !borderAhead()) {
+            if (onNest()) {
+                if (!onEgg()) {
+                    layEgg();
+                    break;
+                }
+            }
             if (fenceAhead()) {
                 climbOverMultipleFences();
             }
@@ -265,6 +268,12 @@ public class MyDodo extends Dodo
                 }
             }
             move();
+            if (onNest()) {
+                if (!onEgg()) {
+                    layEgg();
+                    break;
+                }
+            }
             if (fenceAhead()) {
                 climbOverMultipleFences();
             }
@@ -289,7 +298,7 @@ public class MyDodo extends Dodo
         
         if (forward == true) {
             return "forward";
-        } else if (right == true) {
+        } if (right == true) {
             return "right";
         } else if (behind == true) {
             return "behind";
@@ -335,28 +344,83 @@ public class MyDodo extends Dodo
     }
     
     public void walkAroundFencedAreaToTheRight() {
-        while (!onEgg()) {
-            String position = positionToRightOfFence();
-            if (position == "none") {
-                turnRight();
-                move();
-            } else if (position == "done") {
-                move();
+        if (detectFence() != "none") {
+            while (!onEgg()) {
+                if (positionToRightOfFence() == "none") {
+                    turnRight();
+                    move();
+                } else if (positionToRightOfFence() == "done") {
+                    move();
+                }
             }
+            positionToRightOfFence();
         }
-        positionToRightOfFence();
     }
     
     public void walkAroundFencedAreaToTheLeft() {
-        while (!onEgg()) {
-            String position = positionToLeftOfFence();
-            if (position == "none") {
+        if (detectFence() != "none") {
+            while (!onEgg()) {
+                if (positionToLeftOfFence() == "none") {
+                    turnLeft();
+                    move();
+                } else if (positionToLeftOfFence() == "done") {
+                    move();
+                }
+            }
+            positionToLeftOfFence();
+        }
+    }
+    
+    public void walkAndPickup() {
+        move();
+        pickUpEgg();
+    }
+    
+    public boolean eggToYourLeft() {
+        turnLeft();
+        boolean egg = eggAhead();
+        turnRight();
+        return egg;
+    }
+    
+    public boolean eggToYourRight() {
+        turnRight();
+        boolean egg = eggAhead();
+        turnLeft();
+        return egg;
+    }
+    
+    public void findNest() {
+        if (!nestAhead()) {
+            turnRight();
+        }
+        if (!nestAhead()) {
+            turnRight();
+        }
+        if (!nestAhead()) {
+            turnRight();
+        }
+        if (!nestAhead()) {
+            turnRight();
+        }
+    }
+    
+    public void eggTrailToNest() {
+        while (!onNest()) {
+            if (eggAhead()) {
+                walkAndPickup();
+            } else if (eggToYourRight()) {
+                turnRight();
+                walkAndPickup();
+            } else if (eggToYourLeft()) {
                 turnLeft();
+                walkAndPickup();
+            } else if (!nestAhead()) {
+                findNest();
                 move();
-            } else if (position == "done") {
-                move();
+            } else {
+                break;
             }
         }
-        positionToLeftOfFence();
     }
 }
