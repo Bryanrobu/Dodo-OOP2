@@ -142,14 +142,25 @@ public class MyDodo extends Dodo
     
     public void climbOverFence() {
         if (fenceAhead()) {
-            turnLeft();
-            move();
-            turnRight();
-            move();
-            move();
-            turnRight();
-            move();
-            turnLeft();
+            if (getDirection() == EAST) {
+                turnLeft();
+                move();
+                turnRight();
+                move();
+                move();
+                turnRight();
+                move();
+                turnLeft();
+            } else if (getDirection() == WEST) {
+                turnRight();
+                move();
+                turnLeft();
+                move();
+                move();
+                turnLeft();
+                move();
+                turnRight();
+            }
         }
         else {
             showError("Your not infront of a fence");
@@ -158,6 +169,7 @@ public class MyDodo extends Dodo
     
     public void climbOverMultipleFences() {
         if (fenceAhead()) {
+            if (getDirection() == EAST) {
                 turnLeft();
                 move();
                 turnRight();
@@ -171,10 +183,26 @@ public class MyDodo extends Dodo
                         turnRight();
                     }
                 }
-            move();
-            turnLeft();
+                move();
+                turnRight();
+            } else if (getDirection() == WEST) {
+                turnRight();
+                move();
+                turnLeft();
+                move();
+                move();
+                turnLeft();
+                while (fenceAhead()) {
+                    if (fenceAhead()) {
+                        turnRight();
+                        move();
+                        turnLeft();
+                    }
+                }
+                move();
+                turnLeft();
             }
-            else {
+            } else {
             showError("Your not infront of a fence");
         }
     }
@@ -378,6 +406,8 @@ public class MyDodo extends Dodo
                 }
             }
             faceEast();
+        } else {
+            showError("There is no fence");
         }
     }
     
@@ -504,40 +534,73 @@ public class MyDodo extends Dodo
     }
     
     public void goToLocation(int x, int y) {
-        while (!locationReached(x, y)) {
-            if (getX() < x) {
-                faceEast();
-                if (!borderAhead() || fenceAhead()) {
-                    move();
-                } else {
-                    break;
-                }               
-            } else if (getX() > x) {
-                faceWest();
-                if (!borderAhead() || fenceAhead()) {
-                    move();
-                } else {
-                    break;
-                }               
+        if (validCoordinates(x, y)) {
+            while (!locationReached(x, y)) {
+                if (getX() < x) {
+                    faceEast();
+                    if (!borderAhead() || fenceAhead()) {
+                        move();
+                    } else {
+                        break;
+                    }               
+                } else if (getX() > x) {
+                    faceWest();
+                    if (!borderAhead() || fenceAhead()) {
+                        move();
+                    } else {
+                        break;
+                    }               
+                }
+                
+                if (getY() < y) {
+                    faceSouth();
+                    if (!borderAhead() || fenceAhead()) {
+                        move();
+                    } else {
+                        break;
+                    }               
+                } else if (getY() > y) {
+                    faceNorth();
+                    if (!borderAhead() || fenceAhead()) {
+                        move();
+                    } else {
+                        break;
+                    }               
+                }
             }
-            
-            if (getY() < y) {
-                faceSouth();
-                if (!borderAhead() || fenceAhead()) {
-                    move();
-                } else {
-                    break;
-                }               
-            } else if (getY() > y) {
-                faceNorth();
-                if (!borderAhead() || fenceAhead()) {
-                    move();
-                } else {
-                    break;
-                }               
+            faceEast();
+        }
+    }
+    
+    public boolean validCoordinates(int x, int y) {
+        if (x > getWorld().getWidth() || y > getWorld().getHeight()) {
+            showError("Invalid Coordinates");
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public int countEggsInRow() {
+        int totalEggs = 0;
+        if (onEgg()) {
+                totalEggs++;
+            }
+        while (!borderAhead()) {
+            move();
+            if (onEgg()) {
+                totalEggs++;
             }
         }
-        faceEast();
+        goBackToStartOfRowAndFaceBack();
+        if (totalEggs == 0) {
+            geefCompliment("er zijn geen eieren in deze rij");
+        } else if (totalEggs == 1) {
+            geefCompliment("er is " + totalEggs + " ei in deze rij");
+        } else {
+            geefCompliment("er zijn " + totalEggs + " eieren in deze rij");
+        }
+        return totalEggs;
     }
 }
 
