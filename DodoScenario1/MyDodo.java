@@ -184,7 +184,7 @@ public class MyDodo extends Dodo
                     }
                 }
                 move();
-                turnRight();
+                turnLeft();
             } else if (getDirection() == WEST) {
                 turnRight();
                 move();
@@ -200,7 +200,7 @@ public class MyDodo extends Dodo
                     }
                 }
                 move();
-                turnLeft();
+                turnRight();
             }
             } else {
             showError("Your not infront of a fence");
@@ -535,39 +535,62 @@ public class MyDodo extends Dodo
         }
     }
     
+    public boolean canStepBackwards() {
+    turn180();
+    boolean result = canMove();
+    turn180();
+    return result;
+    }
+    
     public void goToLocation(int x, int y) {
         if (validCoordinates(x, y)) {
             while (!locationReached(x, y)) {
                 if (getX() < x) {
                     faceEast();
-                    if (!borderAhead() || fenceAhead()) {
+                    if (!borderAhead() && !fenceAhead()) {
                         move();
+                    } else if (fenceAhead()) {
+                        if (canStepBackwards()) {
+                            stepOneCellBackwards();
+                        } else {
+                            climbOverMultipleFences();
+                        }
                     } else {
                         break;
-                    }               
+                    }             
                 } else if (getX() > x) {
                     faceWest();
-                    if (!borderAhead() || fenceAhead()) {
+                    if (!borderAhead() && !fenceAhead()) {
                         move();
+                    } else if (fenceAhead()) {
+                        if (canStepBackwards()) {
+                            stepOneCellBackwards();
+                        } else {
+                            climbOverMultipleFences();
+                        }                        
                     } else {
                         break;
-                    }               
+                    }
                 }
                 
                 if (getY() < y) {
                     faceSouth();
-                    if (!borderAhead() || fenceAhead()) {
+                    if (!borderAhead() && !fenceAhead()) {
                         move();
+                    } else if (fenceAhead()) {
+                        climbOverMultipleFences();
                     } else {
                         break;
                     }               
                 } else if (getY() > y) {
                     faceNorth();
-                    if (!borderAhead() || fenceAhead()) {
+                    if (!borderAhead() && !fenceAhead()) {
                         move();
+                    } else if (fenceAhead()) {
+                        climbOverMultipleFences();
                     } else {
                         break;
-                    }               
+                    }         
                 }
             }
             faceEast();
@@ -589,9 +612,13 @@ public class MyDodo extends Dodo
                 totalEggs++;
             }
         while (!borderAhead()) {
-            move();
-            if (onEgg()) {
-                totalEggs++;
+            if (!fenceAhead()) {
+                move();
+                if (onEgg()) {
+                    totalEggs++;
+                }
+            } else {
+                climbOverMultipleFences();
             }
         }
         goBackToStartOfRowAndFaceBack();
@@ -603,6 +630,118 @@ public class MyDodo extends Dodo
             geefCompliment("er zijn " + totalEggs + " eieren in deze rij");
         }
         return totalEggs;
+    }
+    
+    public int countEggsInRowForFullMap() {
+        int totalEggs = 0;
+        if (onEgg()) {
+                totalEggs++;
+            }
+        while (!borderAhead()) {
+            if (!fenceAhead()) {
+                move();
+                if (onEgg()) {
+                    totalEggs++;
+                }
+            } else {
+                showError("Something went wrong");
+                break;               
+            }
+        }
+        return totalEggs;
+        }
+    
+    
+    public void layTrailOfEggs(int n) {
+        if (getDirection() == EAST || getDirection() == WEST) {
+            if (getX() + n < getWorld().getWidth()) {
+                for (int i = 1 ; i < n ; i++) {
+                    layEgg();
+                    move();
+                }
+                layEgg();
+            } else {
+                showError("Out of bounds!");
+            }
+        } else if (getDirection() == NORTH || getDirection() == SOUTH) {
+            if (getX() + n < getWorld().getHeight()) {
+                for (int i = 1 ; i < n ; i++) {
+                    layEgg();
+                    move();
+                }
+                layEgg();
+            } else {
+                showError("Out of bounds!");
+            }
+        }
+    }
+    
+    public boolean turnAroundToNextRow() {
+        if (getDirection() == EAST) {
+            turnRight();
+            if (borderAhead()) {
+                return true;
+            }
+            move();
+            turnRight();
+            return false;
+        } else if (getDirection() == WEST) {
+            turnLeft();
+            if (borderAhead()) {
+                return true;
+            }            
+            move();
+            turnLeft();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public int countEggsInWorld() {
+        int startx = getX();
+        int starty = getY();
+        boolean end = false;
+        int totalEggs = 0;
+        if (validCoordinates(0, 0)) {
+            goToLocation(0, 0);
+            faceEast();           
+            while (end == false) {
+                totalEggs = totalEggs + countEggsInRowForFullMap();
+                end = turnAroundToNextRow();
+            }
+            if (validCoordinates(startx, starty)) {
+                goToLocation(startx, starty);
+            }            
+        }
+        return totalEggs;
+    }
+    
+    public int countWhichRowHasMostEggs() {
+        int startx = getX();
+        int starty = getY();
+        boolean end = false;
+        int tempRow = 0;
+        int maxRowEggs = 0;
+        int activeRowEggs = 0;
+        int finalRow = 0;
+        if (validCoordinates(0, 0)) {
+            goToLocation(0, 0);
+            faceEast();
+            while (end == false) {
+                tempRow++;
+                activeRowEggs = countEggsInRowForFullMap();
+                if (activeRowEggs >= maxRowEggs) {
+                    maxRowEggs = activeRowEggs;
+                    finalRow = tempRow;
+                }
+                end = turnAroundToNextRow();
+            }
+            if (validCoordinates(startx, starty)) {
+                goToLocation(startx, starty);
+            }
+        }
+        return finalRow;
     }
 }
 
