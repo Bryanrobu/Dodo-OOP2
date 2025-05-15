@@ -652,9 +652,9 @@ public class MyDodo extends Dodo
         }
     
     
-    public void layTrailOfEggs(int n) {
+    public boolean layTrailOfEggs(int n) {
         if (getDirection() == EAST || getDirection() == WEST) {
-            if (getX() + n < getWorld().getWidth()) {
+            if (getX() + n-1  < getWorld().getWidth()) {
                 for (int i = 1 ; i < n ; i++) {
                     layEgg();
                     move();
@@ -662,9 +662,10 @@ public class MyDodo extends Dodo
                 layEgg();
             } else {
                 showError("Out of bounds!");
+                return false;
             }
         } else if (getDirection() == NORTH || getDirection() == SOUTH) {
-            if (getX() + n < getWorld().getHeight()) {
+            if (getX() + n-1  < getWorld().getHeight()) {
                 for (int i = 1 ; i < n ; i++) {
                     layEgg();
                     move();
@@ -672,8 +673,10 @@ public class MyDodo extends Dodo
                 layEgg();
             } else {
                 showError("Out of bounds!");
+                return false;
             }
         }
+        return true;
     }
     
     public boolean turnAroundToNextRow() {
@@ -742,6 +745,94 @@ public class MyDodo extends Dodo
             }
         }
         return finalRow;
+    }
+    
+    public boolean turnAroundToSamex(int x) {
+        faceSouth();
+        if (borderAhead()) {
+            return true;
+        }
+        move();
+        faceWest();
+        while (getX() > x) {
+            move();
+        }
+        return false;
+    }
+    
+    public boolean turnAroundToPreviousx(int x) {
+        faceSouth();
+        if (borderAhead()) {
+            return true;
+        }
+        move();
+        faceWest();
+        while (getX() > x-1) {
+            move();
+            if (borderAhead()) {
+            return true;
+            }
+        }
+        return false;
+    }
+    
+    public void monumentOfEggs() {
+        int startx = getX();
+        int starty = getY();
+        int eggsToLay = 1;
+        boolean end = false;
+        boolean canMove = true;
+        while (end == false) {
+            faceEast();
+            canMove = layTrailOfEggs(eggsToLay);
+            if (canMove == false) {
+                faceEast();
+                break;
+            }
+            end = turnAroundToSamex(startx);
+            eggsToLay++;
+        }
+        faceEast();
+    }
+    
+    public void stableMonumentOfEggs() {
+        int startx = getX();
+        int starty = getY();
+        int eggsToLay = 1;
+        boolean end = false;
+        boolean canMove = true;
+        while (end == false) {
+            faceEast();
+            canMove = layTrailOfEggs(eggsToLay);
+            if (canMove == false) {
+                faceEast();
+                break;
+            }
+            end = turnAroundToSamex(startx);
+            eggsToLay = eggsToLay * 2;
+        }
+        faceEast();
+    }
+    
+    public void stablePyramidOfEggs() {
+        int startx = 0;
+        int starty = 0;
+        int eggsToLay = 1;
+        boolean end = false;
+        boolean canMove = true;
+        while (end == false) {
+            startx = getX();
+            starty = getY();
+            faceEast();
+            canMove = layTrailOfEggs(eggsToLay);
+            if (canMove == false) {
+                faceEast();
+                break;
+            }
+            end = turnAroundToPreviousx(startx);
+            eggsToLay = eggsToLay += 2;
+        }
+        faceEast();
     }
 }
 
