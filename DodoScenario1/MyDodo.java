@@ -504,24 +504,40 @@ public class MyDodo extends Dodo
     
     public void faceEast() {
         while (getDirection() != EAST) {
+            if (getDirection() == SOUTH) {
+                turnLeft();
+                break;
+            }
             turnRight();
         }
     }
     
     public void faceNorth() {
         while (getDirection() != NORTH) {
+            if (getDirection() == EAST) {
+                turnLeft();
+                break;
+            }
             turnRight();
         }
     }
     
     public void faceSouth() {
         while (getDirection() != SOUTH) {
+            if (getDirection() == WEST) {
+                turnLeft();
+                break;
+            }
             turnRight();
         }
     }
     
     public void faceWest() {
         while (getDirection() != WEST) {
+            if (getDirection() == NORTH) {
+                turnLeft();
+                break;
+            }
             turnRight();
         }
     }
@@ -535,10 +551,10 @@ public class MyDodo extends Dodo
     }
     
     public boolean canStepBackwards() {
-    turn180();
-    boolean result = canMove();
-    turn180();
-    return result;
+        turn180();
+        boolean result = canMove();
+        turn180();
+        return result;
     }
     
     public void goToLocation(int x, int y) {
@@ -597,7 +613,7 @@ public class MyDodo extends Dodo
     }
     
     public boolean validCoordinates(int x, int y) {
-        if (x > getWorld().getWidth() || y > getWorld().getHeight()) {
+        if (x > getWorld().getWidth() -1 || y > getWorld().getHeight()-1) {
             showError("Invalid Coordinates");
             return false;
         } else {
