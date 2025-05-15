@@ -500,7 +500,6 @@ public class MyDodo extends Dodo
         }
         faceEast();
         layEgg();
-        geefCompliment("Goed gedaan mini!");
     }
     
     public void faceEast() {
@@ -608,6 +607,9 @@ public class MyDodo extends Dodo
     
     public int countEggsInRow() {
         int totalEggs = 0;
+        int startx = getX();
+        int starty = getY();
+        goBackToStartOfRowAndFaceBack();
         if (onEgg()) {
                 totalEggs++;
             }
@@ -621,14 +623,7 @@ public class MyDodo extends Dodo
                 climbOverMultipleFences();
             }
         }
-        goBackToStartOfRowAndFaceBack();
-        if (totalEggs == 0) {
-            geefCompliment("er zijn geen eieren in deze rij");
-        } else if (totalEggs == 1) {
-            geefCompliment("er is " + totalEggs + " ei in deze rij");
-        } else {
-            geefCompliment("er zijn " + totalEggs + " eieren in deze rij");
-        }
+        goToLocation(startx, starty);
         return totalEggs;
     }
     
@@ -833,6 +828,28 @@ public class MyDodo extends Dodo
             eggsToLay = eggsToLay += 2;
         }
         faceEast();
+    }
+    
+    public double countAverageEggsPerRow() {
+        int startx = getX();
+        int starty = getY();
+        boolean end = false;
+        double totalEggs = 0;
+        double averageEggsPerRow = 0;
+        double rows = 0;
+        if (validCoordinates(0, 0)) {
+            goToLocation(0, 0);   
+            while (end == false) {
+                rows++;
+                totalEggs = totalEggs + countEggsInRowForFullMap();
+                end = turnAroundToNextRow();
+            }
+            if (validCoordinates(startx, starty)) {
+                goToLocation(startx, starty);
+            }
+            averageEggsPerRow = totalEggs / rows;
+        }
+        return averageEggsPerRow;
     }
 }
 
