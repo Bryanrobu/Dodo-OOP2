@@ -691,7 +691,7 @@ public class MyDodo extends Dodo
     }
     
     public boolean turnAroundToNextRow() {
-        if (getDirection() == EAST) {
+        if (getDirection() == EAST || getDirection() == NORTH) {
             turnRight();
             if (borderAhead()) {
                 return true;
@@ -699,7 +699,7 @@ public class MyDodo extends Dodo
             move();
             turnRight();
             return false;
-        } else if (getDirection() == WEST) {
+        } else if (getDirection() == WEST || getDirection() == SOUTH) {
             turnLeft();
             if (borderAhead()) {
                 return true;
@@ -866,6 +866,47 @@ public class MyDodo extends Dodo
             averageEggsPerRow = totalEggs / rows;
         }
         return averageEggsPerRow;
+    }
+    
+    private boolean evenEggsInRow(int x) {
+        if (x == 2) {
+            return true;
+        }
+        return false;
+    }
+    
+    public void fixBrokenRowAndColumn() {
+        int startx = getX();
+        int starty = getY();
+        boolean end = false;
+        int rows = -1;
+        int rowEggs = 0;
+        int brokenRow = 0;
+        int brokenColumn = 0;
+        if (validCoordinates(0, 0)) {
+            goToLocation(0, 0); 
+            while (end == false) {
+                rows++;
+                if (countEggsInRowForFullMap() % 2 != 0) {
+                    brokenRow = rows;
+                }
+                end = turnAroundToNextRow();
+            }
+            end = false;
+            goToLocation(0, 0);  
+            faceSouth();
+            rows = -1;
+            while (end == false) {
+                rows++;
+                if (countEggsInRowForFullMap() % 2 != 0) {
+                    brokenColumn = rows;
+                }
+                end = turnAroundToNextRow();
+            }
+            goToLocation(brokenColumn, brokenRow);
+            layEgg();
+            goToLocation(0, 0);
+        }
     }
 }
 
