@@ -1,5 +1,7 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
+import java.util.List;
+
 /**
  *
  * @author Sjaak Smetsers & Renske Smetsers-Weeda
@@ -642,7 +644,7 @@ public class MyDodo extends Dodo
         goToLocation(startx, starty);
         return totalEggs;
     }
-    
+
     public int countEggsInRowForFullMap() {
         int totalEggs = 0;
         if (onEgg()) {
@@ -879,34 +881,99 @@ public class MyDodo extends Dodo
         int startx = getX();
         int starty = getY();
         boolean end = false;
+        boolean row1 = false;
+        boolean row2 = false;
         int rows = -1;
         int rowEggs = 0;
         int brokenRow = 0;
         int brokenColumn = 0;
-        if (validCoordinates(0, 0)) {
+        
             goToLocation(0, 0); 
             while (end == false) {
                 rows++;
                 if (countEggsInRowForFullMap() % 2 != 0) {
                     brokenRow = rows;
+                    row1 = true;
                 }
                 end = turnAroundToNextRow();
             }
             end = false;
             goToLocation(0, 0);  
-            faceSouth();
+            turnRight();
             rows = -1;
             while (end == false) {
                 rows++;
                 if (countEggsInRowForFullMap() % 2 != 0) {
                     brokenColumn = rows;
+                    row2 = true;
                 }
                 end = turnAroundToNextRow();
             }
-            goToLocation(brokenColumn, brokenRow);
-            layEgg();
+            if (row1 == true && row2 == true) {
+                goToLocation(brokenColumn, brokenRow);
+                layEgg();
+            }
             goToLocation(0, 0);
+        
+    }
+    
+    public void goToTopLeftCorner() {
+        while (!borderAhead()) {
+            move();
         }
+        turnLeft();
+        while (!borderAhead()) {
+            move();
+        }
+        turnLeft();
+        while (!borderAhead()) {
+            move();
+        }
+        turn180();
+    }
+    
+    public void agenericParity() {
+        boolean end = false;
+        boolean row1 = false;
+        boolean row2 = false;
+        int rows = -1;
+        int rowEggs = 0;
+        int brokenRow = 0;
+        int brokenColumn = 0;
+            goToTopLeftCorner();
+            while (end == false) {
+                    rows++;
+                    if (countEggsInRowForFullMap() % 2 != 0) {
+                        brokenRow = rows;
+                        row1 = true;
+                    }
+                    end = turnAroundToNextRow();
+            }
+            end = false;
+            turnLeft();
+            goToTopLeftCorner();
+            turnRight();
+            rows = -1;
+            while (end == false) {
+                rows++;
+                if (countEggsInRowForFullMap() % 2 != 0) {
+                    brokenColumn = rows;
+                    row2 = true;
+                }
+                end = turnAroundToNextRow();
+            }           
+            goToTopLeftCorner();
+            
+            while (getX() != brokenColumn) {
+                move();
+            }
+            turnRight();
+            while (getY() != brokenRow) {
+                move();
+            }
+            turnLeft();
+            layEgg();
+            goToTopLeftCorner();
     }
 }
 
