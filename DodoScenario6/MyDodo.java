@@ -94,4 +94,8 @@ public class MyDodo extends Dodo
     public void practiceWithListsOfSurpriseEggs( ){
         List<SurpriseEgg>  listOfEgss = SurpriseEgg.generateListOfSurpriseEggs( 12, getWorld() );
     }
+    
+    public void generateListOfSurpriseEggs( int size ) {
+        List<SurpriseEgg> eggs = SurpriseEgg.generateListOfSurpriseEggs(size, getWorld());
+    }
 }

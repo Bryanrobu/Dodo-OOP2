@@ -40,6 +40,7 @@ public class Mauritius extends World
 
     private static WorldReader WORLD_READER = null;
     private static int WORLD_WIDTH, WORLD_HEIGHT;
+    private List<SurpriseEgg> eggs;
     
     static {
         if ( ! WORLD_NAME.isEmpty() ) {
@@ -65,8 +66,54 @@ public class Mauritius extends World
         setPaintOrder (Message.class, Scoreboard.class, Dodo.class, Grain.class,
                        Nest.class, Egg.class, Fence.class);        
         populate();
+        eggs = SurpriseEgg.generateListOfSurpriseEggs(10, this);
+        
     }
-
+    
+    public void printCoordinatesAndValuesOfEggs() {
+        int totaal = 0;
+        for (Egg egg : eggs) {
+            printCoordinatesOfEgg(egg);
+            printValueOfEgg(egg);
+        }
+    }
+    
+    public void calculateAverageValue() {
+        int totaal = 0;
+        for (Egg egg : eggs) {
+            totaal = totaal + egg.getValue();
+        }
+        double gemiddelde = (double) totaal / eggs.size(); 
+        System.out.println("Gemiddelde waarde van eieren: " + gemiddelde);
+    }
+    
+    public void printMostValueableEgg() {
+        if (eggs.isEmpty()) {
+            System.out.println("Er zijn geen eieren.");
+            return;
+        }
+    
+        Egg hoogsteEi = eggs.get(0);
+    
+        for (Egg egg : eggs) {
+            if (egg.getValue() > hoogsteEi.getValue()) {
+                hoogsteEi = egg;
+            }
+        }
+    
+        System.out.println("Hoogste waarde: " + hoogsteEi.getValue());
+        System.out.println("Locatie: X=" + hoogsteEi.getX() + ", Y=" + hoogsteEi.getY());
+    }
+    
+    public void printCoordinatesOfEgg(Egg egg) {
+        System.out.println("X: " + egg.getX() + ", Y: " + egg.getY());
+    }
+    
+    public int printValueOfEgg(Egg egg) {
+        System.out.println("Value: " + egg.getValue());
+        return egg.getValue();
+    }
+    
     public static void traceOn() {
         traceOn = true;
     }
@@ -78,7 +125,6 @@ public class Mauritius extends World
     public static boolean traceIsOn() {
         return traceOn;
     }
-
 
     public void updateScore( int ... scores ){
         theScoreboard.updateScore( scores );
