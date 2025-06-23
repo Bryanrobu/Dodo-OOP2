@@ -67,7 +67,10 @@ public class Mauritius extends World
                        Nest.class, Egg.class, Fence.class);        
         populate();
         eggs = SurpriseEgg.generateListOfSurpriseEggs(10, this);
-        
+    }
+    
+    public List<SurpriseEgg> getEggList() {
+        return eggs;
     }
     
     public void printCoordinatesAndValuesOfEggs() {
@@ -76,15 +79,6 @@ public class Mauritius extends World
             printCoordinatesOfEgg(egg);
             printValueOfEgg(egg);
         }
-    }
-    
-    public void calculateAverageValue() {
-        int totaal = 0;
-        for (Egg egg : eggs) {
-            totaal = totaal + egg.getValue();
-        }
-        double gemiddelde = (double) totaal / eggs.size(); 
-        System.out.println("Gemiddelde waarde van eieren: " + gemiddelde);
     }
     
     public void printMostValueableEgg() {
@@ -105,11 +99,11 @@ public class Mauritius extends World
         System.out.println("Locatie: X=" + hoogsteEi.getX() + ", Y=" + hoogsteEi.getY());
     }
     
-    public void printCoordinatesOfEgg(Egg egg) {
+    private void printCoordinatesOfEgg(Egg egg) {
         System.out.println("X: " + egg.getX() + ", Y: " + egg.getY());
     }
     
-    public int printValueOfEgg(Egg egg) {
+    private int printValueOfEgg(Egg egg) {
         System.out.println("Value: " + egg.getValue());
         return egg.getValue();
     }

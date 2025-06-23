@@ -98,4 +98,19 @@ public class MyDodo extends Dodo
     public void generateListOfSurpriseEggs( int size ) {
         List<SurpriseEgg> eggs = SurpriseEgg.generateListOfSurpriseEggs(size, getWorld());
     }
+    
+    public void printCoordinatesAndValuesOfEggs() {
+        ((Mauritius)getWorld()).printCoordinatesAndValuesOfEggs();
+        
+    }
+    
+    public void calculateAverageValue() {
+        List<SurpriseEgg> eggs = ((Mauritius)getWorld()).getEggList();
+        int totaal = 0;
+        for (Egg egg : eggs) {
+            totaal = totaal + egg.getValue();
+        }
+        double gemiddelde = (double) totaal / eggs.size(); 
+        System.out.println("Gemiddelde waarde van eieren: " + gemiddelde);
+    }
 }
