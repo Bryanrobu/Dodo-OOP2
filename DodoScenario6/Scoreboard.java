@@ -43,7 +43,7 @@ public class Scoreboard  extends Actor
         drawScore( new_scores );
     }
 
-    private void drawScore( int ... scores ) {
+    public void drawScore( int ... scores ) {
         int sb_width;
         String sb_text;
         if ( scores.length == 1 ) {

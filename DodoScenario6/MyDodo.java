@@ -113,4 +113,70 @@ public class MyDodo extends Dodo
         double gemiddelde = (double) totaal / eggs.size(); 
         System.out.println("Gemiddelde waarde van eieren: " + gemiddelde);
     }
+    
+    public void faceEast() {
+        while (getDirection() != EAST) {
+            if (getDirection() == SOUTH) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void faceNorth() {
+        while (getDirection() != NORTH) {
+            if (getDirection() == EAST) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void faceSouth() {
+        while (getDirection() != SOUTH) {
+            if (getDirection() == WEST) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void faceWest() {
+        while (getDirection() != WEST) {
+            if (getDirection() == NORTH) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void turnRandomly() {
+        if (randomDirection() == 0) {
+            faceNorth();
+        } else if (randomDirection() == 1) {
+            faceEast();
+        }else if (randomDirection() == 1) {
+            faceSouth();
+        }else if (randomDirection() == 1) {
+            faceWest();
+        }
+    }
+    
+    public void moveRandomly() {
+        int myNrOfStepsTaken = Mauritius.MAXSTEPS;
+        while (myNrOfStepsTaken != 0) {
+            turnRandomly();
+            if (!canMove()) {
+                turnRandomly();
+            } else {
+                move();
+                myNrOfStepsTaken--;
+            }
+        }
+        faceEast();
+    }
 }

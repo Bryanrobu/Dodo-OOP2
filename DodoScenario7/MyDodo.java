@@ -86,7 +86,6 @@ public class MyDodo extends Dodo
     public List<Integer> createListOfNumbers() {
         return new ArrayList<> (Arrays.asList( 2, 43, 7, -5, 12, 7 ));
     }
-    
 
     /**
      * Method for praciticing with lists.
@@ -98,5 +97,110 @@ public class MyDodo extends Dodo
 
     public void practiceWithListsOfSurpriseEgss( ){
         List<SurpriseEgg>  listOfEgss = SurpriseEgg.generateListOfSurpriseEggs( 12, getWorld() );
+    }
+    
+    public void faceEast() {
+        while (getDirection() != EAST) {
+            if (getDirection() == SOUTH) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void faceNorth() {
+        while (getDirection() != NORTH) {
+            if (getDirection() == EAST) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void faceSouth() {
+        while (getDirection() != SOUTH) {
+            if (getDirection() == WEST) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void faceWest() {
+        while (getDirection() != WEST) {
+            if (getDirection() == NORTH) {
+                turnLeft();
+                break;
+            }
+            turnRight();
+        }
+    }
+    
+    public void turnRandomly() {
+        if (randomDirection() == 0) {
+            faceNorth();
+        } else if (randomDirection() == 1) {
+            faceEast();
+        }else if (randomDirection() == 1) {
+            faceSouth();
+        }else if (randomDirection() == 1) {
+            faceWest();
+        }
+    }
+    
+    public void goToLocation(int x, int y) {
+        while (getX() < x) {
+            faceEast();
+            move();             
+        } 
+            
+        while (getX() > x) {
+            faceWest();
+            move(); 
+        }
+                
+        while (getY() < y) {
+            faceSouth();
+            move();             
+        } 
+                
+        while (getY() > y) {
+            faceNorth();
+            move();        
+        }
+        faceEast();        
+    }
+    
+    public void moveRandomly() {
+        int myNrOfStepsTaken = Mauritius.MAXSTEPS;
+        int score = 0;
+        if(onBlueEgg()) {
+            pickUpEgg();
+            score =+ 1;
+        } else if (onGoldEgg()) {
+            pickUpEgg();
+            score =+ 5;
+        }
+        while (myNrOfStepsTaken != 0) {
+            turnRandomly();
+            if (!canMove()) {
+                turnRandomly();
+            } else {
+                move();
+                if(onBlueEgg()) {
+                    pickUpEgg();
+                    score =+ 1;
+                } else if (onGoldEgg()) {
+                    pickUpEgg();
+                    score =+ 5;
+                }
+                myNrOfStepsTaken--;
+                ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+            }
+        }
+        faceEast();
     }
 }
