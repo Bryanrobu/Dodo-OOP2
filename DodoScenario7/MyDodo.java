@@ -203,4 +203,65 @@ public class MyDodo extends Dodo
         }
         faceEast();
     }
+    
+    public void dodoRace() {
+        int myNrOfStepsTaken = Mauritius.MAXSTEPS;
+        int score = 0;
+        int deviation = 0;
+        int goldenEggRange = 8;
+        List<Egg> listOfEggs= getListOfEggsInWorld();
+        while (myNrOfStepsTaken != 0 && !listOfEggs.isEmpty()) {
+            Egg closestEgg = null;
+            int shortestDistance = Integer.MAX_VALUE;
+    
+            for (Egg egg : listOfEggs) {
+                int dist = Math.abs(egg.getX() - getX()) + Math.abs(egg.getY() - getY());
+                if (dist < shortestDistance) {
+                    shortestDistance = dist;
+                    closestEgg = egg;
+                }
+                if (egg instanceof GoldenEgg && dist < goldenEggRange) {
+                    closestEgg = egg;
+                    break;
+                }
+            }
+    
+            if (closestEgg != null) {
+                while (getX() < closestEgg.getX() && myNrOfStepsTaken > 0) {
+                    faceEast();
+                    move();
+                    myNrOfStepsTaken--;
+                }
+                while (getX() > closestEgg.getX() && myNrOfStepsTaken > 0) {
+                    faceWest();
+                    move();
+                    myNrOfStepsTaken--;
+                }
+        
+                while (getY() < closestEgg.getY() && myNrOfStepsTaken > 0) {
+                    faceSouth();
+                    move();
+                    myNrOfStepsTaken--;
+                }
+                while (getY() > closestEgg.getY() && myNrOfStepsTaken > 0) {
+                    faceNorth();
+                    move();
+                    myNrOfStepsTaken--;
+                }
+        
+                if (onBlueEgg()) {
+                    pickUpEgg();
+                    score++;
+                } else if (onGoldEgg()) {
+                    pickUpEgg();
+                    score += 5;
+                }
+        
+                listOfEggs = getListOfEggsInWorld();
+                ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+            } else {
+                break;
+            }
+        }
+    }
 }

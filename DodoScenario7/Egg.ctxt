@@ -9,4 +9,6 @@ comment3.params=newValue
 comment3.target=void\ setValue(int)
 comment4.params=x\ y
 comment4.target=void\ setLocation(int,\ int)
-numComments=5
+comment5.params=
+comment5.target=void\ isGold()
+numComments=6

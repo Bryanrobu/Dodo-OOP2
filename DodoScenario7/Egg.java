@@ -28,4 +28,8 @@ public abstract class Egg extends Actor
             super.setLocation( x, y );
         }
     }
+    
+    public void isGold() {
+        
+    }
 }
