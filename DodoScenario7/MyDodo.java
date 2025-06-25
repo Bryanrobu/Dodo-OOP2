@@ -230,22 +230,26 @@ public class MyDodo extends Dodo
                 while (getX() < closestEgg.getX() && myNrOfStepsTaken > 0) {
                     faceEast();
                     move();
+                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
                     myNrOfStepsTaken--;
                 }
                 while (getX() > closestEgg.getX() && myNrOfStepsTaken > 0) {
                     faceWest();
                     move();
+                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
                     myNrOfStepsTaken--;
                 }
         
                 while (getY() < closestEgg.getY() && myNrOfStepsTaken > 0) {
                     faceSouth();
                     move();
+                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
                     myNrOfStepsTaken--;
                 }
                 while (getY() > closestEgg.getY() && myNrOfStepsTaken > 0) {
                     faceNorth();
                     move();
+                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
                     myNrOfStepsTaken--;
                 }
         
