@@ -99,6 +99,9 @@ public class MyDodo extends Dodo
         List<SurpriseEgg>  listOfEgss = SurpriseEgg.generateListOfSurpriseEggs( 12, getWorld() );
     }
     
+    /**
+    * Faces east
+    */
     public void faceEast() {
         while (getDirection() != EAST) {
             if (getDirection() == SOUTH) {
@@ -109,6 +112,9 @@ public class MyDodo extends Dodo
         }
     }
     
+    /**
+    * Faces north
+    */
     public void faceNorth() {
         while (getDirection() != NORTH) {
             if (getDirection() == EAST) {
@@ -119,6 +125,9 @@ public class MyDodo extends Dodo
         }
     }
     
+    /**
+    * Faces south
+    */
     public void faceSouth() {
         while (getDirection() != SOUTH) {
             if (getDirection() == WEST) {
@@ -129,6 +138,9 @@ public class MyDodo extends Dodo
         }
     }
     
+    /**
+    * Faces west
+    */
     public void faceWest() {
         while (getDirection() != WEST) {
             if (getDirection() == NORTH) {
@@ -139,6 +151,9 @@ public class MyDodo extends Dodo
         }
     }
     
+    /**
+    * Faces a random direction 
+    */
     public void turnRandomly() {
         if (randomDirection() == 0) {
             faceNorth();
@@ -151,29 +166,9 @@ public class MyDodo extends Dodo
         }
     }
     
-    public void goToLocation(int x, int y) {
-        while (getX() < x) {
-            faceEast();
-            move();             
-        } 
-            
-        while (getX() > x) {
-            faceWest();
-            move(); 
-        }
-                
-        while (getY() < y) {
-            faceSouth();
-            move();             
-        } 
-                
-        while (getY() > y) {
-            faceNorth();
-            move();        
-        }
-        faceEast();        
-    }
-    
+    /**
+    * Moves around randomly while counting down steps and picking up eggs
+    */
     public void moveRandomly() {
         int myNrOfStepsTaken = Mauritius.MAXSTEPS;
         int score = 0;
@@ -204,65 +199,91 @@ public class MyDodo extends Dodo
         faceEast();
     }
     
+    
+    /**
+    * Goes to a specefic egg
+    * 
+    * @param: Egg item, score, steps taken
+    * 
+    * @return: int ofnew steps taken
+    */
+    public int goToEgg(Egg closestEgg, int score, int myNrOfStepsTaken) {
+        while (getX() < closestEgg.getX() && myNrOfStepsTaken > 0) {
+            faceEast();
+            move();
+            myNrOfStepsTaken--;
+            ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+        }
+        while (getX() > closestEgg.getX() && myNrOfStepsTaken > 0) {
+            faceWest();
+            move();
+            myNrOfStepsTaken--;
+            ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+        }
+        
+        while (getY() < closestEgg.getY() && myNrOfStepsTaken > 0) {
+            faceSouth();
+            move();
+            myNrOfStepsTaken--;
+            ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+        }
+        while (getY() > closestEgg.getY() && myNrOfStepsTaken > 0) {
+            faceNorth();
+            move();
+            myNrOfStepsTaken--;
+            ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+        }
+        return myNrOfStepsTaken;
+    }
+    
+    /**
+    * Finds the closest egg to the dodo and measuring if its worth going to a
+    * golden egg or not
+    * 
+    * @param: list of eggs
+    * 
+    * @return: item of egg
+    */
+    public Egg findClosestEgg(List<Egg> listOfEggs) {
+        Egg closestEgg = null;
+        int goldenEggRange = 8;
+        int shortestDistance = Integer.MAX_VALUE;
+        for (Egg egg : listOfEggs) {
+            int dist = Math.abs(egg.getX() - getX()) + Math.abs(egg.getY() - getY());
+            if (dist < shortestDistance) {
+                shortestDistance = dist;
+                closestEgg = egg;
+            }
+            if (egg instanceof GoldenEgg && dist < goldenEggRange) {
+                closestEgg = egg;
+                break;
+            }
+        }
+        return closestEgg;
+    }
+   
+    /**
+    * Finds the ideal path to all the eggs, counting steps along the way and updating the
+    * scoreboard
+    */
     public void dodoRace() {
         int myNrOfStepsTaken = Mauritius.MAXSTEPS;
         int score = 0;
         int deviation = 0;
-        int goldenEggRange = 8;
         List<Egg> listOfEggs= getListOfEggsInWorld();
         while (myNrOfStepsTaken != 0 && !listOfEggs.isEmpty()) {
-            Egg closestEgg = null;
-            int shortestDistance = Integer.MAX_VALUE;
-    
-            for (Egg egg : listOfEggs) {
-                int dist = Math.abs(egg.getX() - getX()) + Math.abs(egg.getY() - getY());
-                if (dist < shortestDistance) {
-                    shortestDistance = dist;
-                    closestEgg = egg;
-                }
-                if (egg instanceof GoldenEgg && dist < goldenEggRange) {
-                    closestEgg = egg;
-                    break;
-                }
-            }
+            Egg closestEgg = findClosestEgg(listOfEggs);
     
             if (closestEgg != null) {
-                while (getX() < closestEgg.getX() && myNrOfStepsTaken > 0) {
-                    faceEast();
-                    move();
-                    myNrOfStepsTaken--;
-                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
-                }
-                while (getX() > closestEgg.getX() && myNrOfStepsTaken > 0) {
-                    faceWest();
-                    move();
-                    myNrOfStepsTaken--;
-                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
-                }
+                myNrOfStepsTaken = goToEgg(closestEgg, score, myNrOfStepsTaken);
         
-                while (getY() < closestEgg.getY() && myNrOfStepsTaken > 0) {
-                    faceSouth();
-                    move();
-                    myNrOfStepsTaken--;
-                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
-                }
-                while (getY() > closestEgg.getY() && myNrOfStepsTaken > 0) {
-                    faceNorth();
-                    move();
-                    myNrOfStepsTaken--;
-                    ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
-                }
-        
-                if (onBlueEgg()) {
-                    pickUpEgg();
-                    score++;
-                } else if (onGoldEgg()) {
-                    pickUpEgg();
-                    score += 5;
-                }
+                if (onEgg()) {
+                    Egg eggvalue = pickUpEgg();
+                    score += eggvalue.getValue();
+                }              
         
                 listOfEggs = getListOfEggsInWorld();
-                ((Mauritius)getWorld()).updateScore(myNrOfStepsTaken, score);
+                updateScores(myNrOfStepsTaken, score);
             } else {
                 break;
             }
